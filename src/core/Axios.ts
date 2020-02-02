@@ -1,5 +1,5 @@
 import { AxiosPromise, AxiosRequestConfig, AxiosResponse, ResolvedFn, RejectedFn } from "../types";
-import dispatchRequest from "./dispatchRequest";
+import dispatchRequest, { transformURL } from "./dispatchRequest";
 import InterceptorManager from "./InterceptorManager";
 import mergeConfig from "./mergeConfig";
 
@@ -24,7 +24,7 @@ export default class Axios {
     }
     this.defaults = initConfig
   }
-  request(url: any, config?: AxiosRequestConfig): AxiosPromise {
+  request(url: any, config?: any): AxiosPromise {
     if (typeof url === 'string') {
       if (!config) config = {}
       config.url = url
@@ -42,12 +42,12 @@ export default class Axios {
     this.interceptors.response.forEach(interceptor => {
       chain.push(interceptor)
     })
-    let promise = Promise.resolve(config!)
+    let promise = Promise.resolve(config)
     while (chain.length) {
       const { resolved, rejected } = chain.shift()!
       promise = promise.then(resolved, rejected)
     }
-    return promise as AxiosPromise
+    return promise
   }
   get(url: string, config?: AxiosRequestConfig): AxiosPromise {
     return this._requestMethodWithoutData('get', url, config)
@@ -70,6 +70,11 @@ export default class Axios {
   }
   patch(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise {
     return this._requestMethodWithData('options', url, data, config)
+  }
+
+  getUri(config?: AxiosRequestConfig) {
+    config = mergeConfig(this.defaults, config)
+    return transformURL(config)
   }
 
   private _requestMethodWithoutData(method: string, url: string, config?: AxiosRequestConfig): AxiosPromise {
