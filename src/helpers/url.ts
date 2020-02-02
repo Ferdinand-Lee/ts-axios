@@ -5,13 +5,13 @@ interface URLOrigin {
 }
 function encode(val: string): string {
   return encodeURIComponent(val)
-    .replace('/%40/g', '@')
-    .replace('/%3A/ig', ':')
-    .replace('/%24/g', '$')
-    .replace('/%2C/ig', ',')
-    .replace('/%20/g', '+')
-    .replace('/%5B/ig', '[')
-    .replace('/%5D/ig', ']')
+    .replace(/%40/g, '@')
+    .replace(/%3A/ig, ':')
+    .replace(/%24/g, '$')
+    .replace(/%2C/ig, ',')
+    .replace(/%20/g, '+')
+    .replace(/%5B/ig, '[')
+    .replace(/%5D/ig, ']')
 }
 
 export function buildURL(url: string, params?: any, paramsSerializer?: (params: any) => string): string {
@@ -56,11 +56,11 @@ export function buildURL(url: string, params?: any, paramsSerializer?: (params: 
 }
 
 export function isAbsoluteURL(url: string): boolean {
-  return /(^[a-z][a-a\d\+\-\.]*:)?\/\//i.test(url)
+  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url)
 }
 export function combineURL(baseURL: string, relativeURL?: string): string {
   return relativeURL
-    ? baseURL.replace('/\/+$', '') + '/' + relativeURL.replace('/^\/+', '')
+    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
     : baseURL
 }
 
